@@ -8,9 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityOptionsCompat;
@@ -27,9 +30,10 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
-class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> {
+class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> implements Filterable {
 
 	private final static int LIMIT = Integer.MAX_VALUE;
 	private final static String PAGE_SIZE = "20";
@@ -38,6 +42,9 @@ class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> {
 
 	private Activity context;
 	private ArrayList<DataItem> data = new ArrayList<>();
+	private ArrayList<DataItem> dataFull = new ArrayList<>(data);
+
+
 	private HashMap<String, Drawable> iconCache = new HashMap<>();
 	private Handler handler = new Handler();
 
@@ -108,6 +115,7 @@ class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> {
 
 	@Override
 	public int getItemCount() {
+//		Log.d("BrowseAdapter", String.valueOf(data.size()));
 		return data.size();
 	}
 
@@ -170,6 +178,48 @@ class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> {
 
 		handler.post(() -> notifyDataSetChanged());
 	}
+
+
+	@Override
+	public Filter getFilter() {
+		return dataFilter;
+	}
+
+
+	private Filter dataFilter = new Filter() {
+		@Override
+		protected FilterResults performFiltering(CharSequence charSequence) {
+			ArrayList<DataItem> filteredList = new ArrayList<>();
+
+			if(charSequence==null||charSequence.length()==0){
+
+				filteredList.addAll(dataFull);
+			}
+			else{
+				String filterPattern = charSequence.toString().toLowerCase().trim();
+
+				for(DataItem item: dataFull){
+					if(item.getText().toLowerCase().contains(filterPattern)){
+						filteredList.add(item);
+					}
+				}
+			}
+
+			FilterResults results = new FilterResults();
+			results.values = filteredList;
+
+			return results;
+		}
+
+		@Override
+		protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+
+			data.clear();
+			data.addAll((ArrayList) filterResults.values);
+			notifyDataSetChanged();
+		}
+	};
+
 
 	private class DataItem {
 
