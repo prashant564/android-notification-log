@@ -42,7 +42,9 @@ class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> implements Fi
 
 	private Activity context;
 	private ArrayList<DataItem> data = new ArrayList<>();
-	private ArrayList<DataItem> dataFull = new ArrayList<>(data);
+	private ArrayList<DataItem> data_to_searched = new ArrayList<>();
+	private ArrayList<DataItem> mfilteredList = new ArrayList<>();
+
 
 
 	private HashMap<String, Drawable> iconCache = new HashMap<>();
@@ -90,6 +92,8 @@ class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> implements Fi
 
 		vh.item.setTag("" + item.getId());
 		vh.name.setText(item.getAppName());
+		data_to_searched.add(item);
+
 
 		if(item.getPreview().length() == 0) {
 			vh.preview.setVisibility(View.GONE);
@@ -115,7 +119,7 @@ class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> implements Fi
 
 	@Override
 	public int getItemCount() {
-//		Log.d("BrowseAdapter", String.valueOf(data.size()));
+		Log.d("BrowseAdapter", String.valueOf(data.size()));
 		return data.size();
 	}
 
@@ -193,18 +197,21 @@ class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> implements Fi
 
 			if(charSequence==null||charSequence.length()==0){
 
-				filteredList.addAll(dataFull);
+				filteredList.addAll(data_to_searched);
 			}
 			else{
-				String filterPattern = charSequence.toString().toLowerCase().trim();
+				String filterPattern;
+				filterPattern = charSequence.toString().toLowerCase().trim();
 
-				for(DataItem item: dataFull){
-					if(item.getText().toLowerCase().contains(filterPattern)){
+				for(DataItem item: data_to_searched){
+
+					if(item.getAppName().toLowerCase().startsWith(filterPattern) || item.getPackageName().toLowerCase().contains(filterPattern)){
 						filteredList.add(item);
 					}
 				}
 			}
 
+			Log.d("Adapter",filteredList.toString());
 			FilterResults results = new FilterResults();
 			results.values = filteredList;
 
@@ -212,12 +219,14 @@ class BrowseAdapter extends RecyclerView.Adapter<BrowseViewHolder> implements Fi
 		}
 
 		@Override
-		protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+		protected void publishResults(CharSequence charSequence, FilterResults results) {
 
 			data.clear();
-			data.addAll((ArrayList) filterResults.values);
+			data.addAll((ArrayList)results.values);
 			notifyDataSetChanged();
 		}
+
+
 	};
 
 

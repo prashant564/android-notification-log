@@ -2,7 +2,9 @@ package org.hcilab.projects.nlogx.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -65,9 +67,6 @@ public class BrowseActivity extends AppCompatActivity implements SwipeRefreshLay
 	}
 
 	private void update() {
-
-
-
 		adapter = new BrowseAdapter(this);
 
 		recyclerView.setAdapter(adapter);
@@ -104,11 +103,11 @@ public class BrowseActivity extends AppCompatActivity implements SwipeRefreshLay
 
                adapter.getFilter().filter(newText);
 
-				return false;
+				return true;
 			}
 		});
 
-		return super.onCreateOptionsMenu(menu);
+		return true;
 	}
 
 }

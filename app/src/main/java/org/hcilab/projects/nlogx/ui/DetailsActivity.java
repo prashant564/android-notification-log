@@ -206,8 +206,11 @@ public class DetailsActivity extends AppCompatActivity {
 
 		if(affectedRows > 0) {
 			Intent data = new Intent();
+			Intent dataFull = new Intent();
 			data.putExtra(EXTRA_ACTION, ACTION_REFRESH);
+			dataFull.putExtra(EXTRA_ACTION, ACTION_REFRESH);
 			setResult(RESULT_OK, data);
+			setResult(RESULT_OK, dataFull);
 			finish();
 		}
 	};

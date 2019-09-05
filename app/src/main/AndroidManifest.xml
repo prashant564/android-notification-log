@@ -37,9 +37,19 @@
             android:name=".ui.BrowseActivity"
             android:label="@string/activity_browse"
             android:parentActivityName=".ui.MainActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.MainActivity" />
+                android:value=".ui.MainActivity"
+                />
         </activity>
 
         <activity
